@@ -29,6 +29,20 @@ function Todos() {
         }
     };
 
+    const handleEditClick = (todo) => {
+        if (isEditable === todo.id) {
+            handleUpdateTodo(todo.id);
+        } else {
+            setIsEditable(todo.id);
+            setEditText(todo.text);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditable(null);
+        setEditText("");
+    };
+
     return (
         <div className="container mx-auto p-6 sm:p-10">
             <div className="bg-white shadow-md rounded-lg p-6 mb-6">
@@ -91,24 +105,16 @@ function Todos() {
                             </div>
 
                             <div className="flex space-x-4 mt-4 sm:mt-0">
-                                {todo.completed ? (
-                                    <button
-                                        className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg opacity-50 cursor-not-allowed"
-                                        disabled
-                                    >
-                                        Edit
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={() => {
-                                            setIsEditable(todo.id);
-                                            setEditText(todo.text);
-                                        }}
-                                        className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-600 transition-all"
-                                    >
-                                        Edit
-                                    </button>
-                                )}
+                                <button
+                                    onClick={() => handleEditClick(todo)}
+                                    className={`px-4 py-2 rounded-lg shadow-lg transition-all ${isEditable === todo.id
+                                        ? "bg-green-500 text-white hover:bg-green-600"
+                                        : "bg-blue-500 text-white hover:bg-blue-600"
+                                    } ${todo.completed ? "opacity-50 cursor-not-allowed" : ""}`}
+                                    disabled={todo.completed}
+                                >
+                                    {isEditable === todo.id ? "Save" : "Edit"}
+                                </button>
 
                                 <button
                                     onClick={() => dispatch(removeTodo(todo.id))}
