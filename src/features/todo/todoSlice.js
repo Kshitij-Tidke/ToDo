@@ -1,39 +1,51 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 
+// Helper function to load todos from local storage
+const loadTodosFromLocalStorage = () => {
+    const savedTodos = localStorage.getItem("todos");
+    if (savedTodos) {
+        return JSON.parse(savedTodos);
+    }
+    return [];
+};
+
+// Initial state: load todos from local storage or use default
 const initialState = {
-    todos: [
-        {
-            id: 1,
-            text: "Hello World!",
-            completed: false
-        }
-    ]
-}
+    todos: loadTodosFromLocalStorage(),
+};
 
 export const todoSlice = createSlice({
     name: 'todos',
     initialState: initialState,
     reducers: {
-        // Has property and functions
-        addTodo: (state, action) => {  // state has initialState or current state and action value aati hai vo
+        addTodo: (state, action) => {
             const todo = {
                 id: nanoid(),
-                text: action.payload // payload ko bhi aap object bana sakto hai 
-            }
-            state.todos.push(todo)
+                text: action.payload,
+                completed: false,
+            };
+            state.todos.push(todo);
+            localStorage.setItem("todos", JSON.stringify(state.todos)); // Save to local storage
         },
         removeTodo: (state, action) => {
-            state.todos = state.todos.filter((todo) => todo.id !== action.payload)
+            state.todos = state.todos.filter((todo) => todo.id !== action.payload);
+            localStorage.setItem("todos", JSON.stringify(state.todos)); // Save to local storage
         },
         updateTodo: (state, action) => {
-            state.todos = state.todos.map((todo) => (todo.id === action.payload.id) ? { ...todo, text: action.payload.text } : todo)
+            state.todos = state.todos.map((todo) =>
+                todo.id === action.payload.id ? { ...todo, text: action.payload.text } : todo
+            );
+            localStorage.setItem("todos", JSON.stringify(state.todos)); // Save to local storage
         },
         toggleTodo: (state, action) => {
-            state.todos = state.todos.map((todo) => (todo.id === action.payload.id) ? { ...todo, completed: !todo.completed } : todo)
-        }
-    }
-})
+            state.todos = state.todos.map((todo) =>
+                todo.id === action.payload.id ? { ...todo, completed: !todo.completed } : todo
+            );
+            localStorage.setItem("todos", JSON.stringify(state.todos)); // Save to local storage
+        },
+    },
+});
 
-export const { addTodo, removeTodo, updateTodo, toggleTodo } = todoSlice.actions
+export const { addTodo, removeTodo, updateTodo, toggleTodo } = todoSlice.actions;
 
-export default todoSlice.reducer
+export default todoSlice.reducer;
